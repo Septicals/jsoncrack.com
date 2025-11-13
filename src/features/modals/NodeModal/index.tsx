@@ -1,9 +1,11 @@
 import React from "react";
 import type { ModalProps } from "@mantine/core";
-import { Modal, Stack, Text, ScrollArea, Flex, CloseButton } from "@mantine/core";
+import { Modal, Stack, Text, ScrollArea, Flex, CloseButton, Button, Group } from "@mantine/core";
 import { CodeHighlight } from "@mantine/code-highlight";
+import { MdEdit } from "react-icons/md";
 import type { NodeData } from "../../../types/graph";
 import useGraph from "../../editor/views/GraphView/stores/useGraph";
+import { useModal } from "../../../store/useModal";
 
 // return object from json removing array and object fields
 const normalizeNodeData = (nodeRows: NodeData["text"]) => {
@@ -28,6 +30,15 @@ const jsonPathToString = (path?: NodeData["path"]) => {
 
 export const NodeModal = ({ opened, onClose }: ModalProps) => {
   const nodeData = useGraph(state => state.selectedNode);
+  const setVisible = useModal(state => state.setVisible);
+
+  const handleEditClick = () => {
+    setVisible("NodeModal", false);
+    setVisible("EditNodeModal", true);
+  };
+
+  // Check if node has editable fields
+  const hasEditableFields = nodeData?.text.some(row => row.type !== "array" && row.type !== "object") ?? false;
 
   return (
     <Modal size="auto" opened={opened} onClose={onClose} centered withCloseButton={false}>
@@ -63,6 +74,17 @@ export const NodeModal = ({ opened, onClose }: ModalProps) => {
             withCopyButton
           />
         </ScrollArea.Autosize>
+        {hasEditableFields && (
+          <Group justify="flex-end" mt="md">
+            <Button
+              leftSection={<MdEdit size={16} />}
+              onClick={handleEditClick}
+              color="blue"
+            >
+              Edit Value
+            </Button>
+          </Group>
+        )}
       </Stack>
     </Modal>
   );

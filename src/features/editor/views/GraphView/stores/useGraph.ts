@@ -36,6 +36,7 @@ interface GraphActions {
   setDirection: (direction: CanvasDirection) => void;
   setViewPort: (ref: ViewPort) => void;
   setSelectedNode: (nodeData: NodeData) => void;
+  editNode: (nodeId: string, updatedData: Partial<NodeData>) => void;
   focusFirstNode: () => void;
   toggleFullscreen: (value: boolean) => void;
   zoomIn: () => void;
@@ -49,6 +50,12 @@ const useGraph = create<Graph & GraphActions>((set, get) => ({
   ...initialStates,
   clearGraph: () => set({ nodes: [], edges: [], loading: false }),
   setSelectedNode: nodeData => set({ selectedNode: nodeData }),
+  editNode: (nodeId, updatedData) => {
+    const nodes = get().nodes.map(node =>
+      node.id === nodeId ? { ...node, ...updatedData } : node
+    );
+    set({ nodes });
+  },
   setGraph: (data, options) => {
     const { nodes, edges } = parser(data ?? useJson.getState().json);
 

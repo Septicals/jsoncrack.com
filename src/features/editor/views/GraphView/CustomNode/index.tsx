@@ -8,6 +8,7 @@ import useGraph from "../stores/useGraph";
 import { ObjectNode } from "./ObjectNode";
 import { TextNode } from "./TextNode";
 
+
 export interface CustomNodeProps {
   node: NodeData;
   x: number;
